@@ -1,0 +1,6 @@
+[submodule "prod_My_Resume"]
+	path = prod_My_Resume
+	url = git@github.com:OskarKobzaDev/prod_My_Resume.git
+[submodule "StoryTime"]
+	path = StoryTime
+	url = git@github.com:OskarKobzaDev/StoryTime.git
