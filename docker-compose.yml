@@ -107,17 +107,17 @@ services:
     volumes:
       - meili_data:/data.ms
     environment:
-      MEILI_MASTER_KEY: masterkey
+      MEILI_MASTER_KEY: AI5vZ2J4QPB2xvPIiMCwQsjK8VjcnG8e
   # Baza Danych MySQL
   db:
     image: mysql:8.0
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: Koczkodan1972!*
       MYSQL_DATABASE: my_resume
       MYSQL_USER: apps
-      MYSQL_PASSWORD: secret
+      MYSQL_PASSWORD: Koczkodan1972!*
       SERVICE_TAGS: prod
       SERVICE_NAME: mysql
     volumes:
@@ -136,7 +136,7 @@ services:
       - app-network
     ports:
       - "6379:6379"
-    command: ["redis-server", "--requirepass", "secret"]
+    command: ["redis-server", "--requirepass", "Koczkodan1972!*"]
 
   # Serwer Nginx
   nginx:
