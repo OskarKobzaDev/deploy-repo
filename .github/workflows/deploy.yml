@@ -5,20 +5,9 @@ jobs:
     steps:
     - name: Checkout repo + submodules
       uses: actions/checkout@v3
+      path: /var/www
       with:
         submodules: recursive
-    
-    - name: Move repo to /var/www
-      run: |
-        rm -rf /var/www/*
-        mv $GITHUB_WORKSPACE/* /var/www/
-    
-    - name: Przygotuj .env
-      run: ./deploy_scripts/generate_env.sh
-      env:
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     
     # - name: Stop and clean containers
     #   run: |
