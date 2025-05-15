@@ -13,7 +13,10 @@ jobs:
       with:
         submodules: recursive
     
-
+    - name: Move repo to /var/www
+      run: |
+        rm -rf /var/www/*
+        mv $GITHUB_WORKSPACE/* /var/www
     
     # - name: Stop and clean containers
     #   run: |
