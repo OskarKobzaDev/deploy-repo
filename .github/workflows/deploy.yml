@@ -10,8 +10,8 @@ jobs:
     steps:
     - name: Clone fresh repo with submodules
       run: |
-        rm -rf /var/www/*
-        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git
+        rm -rf /home/oskar/var/www/*
+        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /home/oskar/var/www
 
 
     # - name: Stop and clean containers
