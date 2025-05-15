@@ -8,21 +8,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Debug SSH
-      run: |
-        echo "Whoami: $(whoami)"
-        ssh -T git@github.com || echo "SSH test failed"
-        ls -la ~/.ssh
-
-    - name: Start SSH agent and add key
-      run: |
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/id_rsa
-
     - name: Clone fresh repo with submodules
       run: |
         rm -rf /var/www/*
-        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /var/www
+        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git
+
+
     # - name: Stop and clean containers
     #   run: |
     #     docker compose down --rmi all --volumes --remove-orphans
