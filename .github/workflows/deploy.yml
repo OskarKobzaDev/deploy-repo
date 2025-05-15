@@ -1,6 +1,6 @@
 jobs:
   deploy:
-    runs-on: self-hosted
+    on: self-hosted
 
     steps:
     - name: Checkout repo + submodules
