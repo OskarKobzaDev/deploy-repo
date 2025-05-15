@@ -8,6 +8,11 @@ jobs:
       with:
         submodules: recursive
     
+    - name: Move repo to /var/www
+      run: |
+        rm -rf /var/www/*
+        mv $GITHUB_WORKSPACE/* /var/www/
+    
     - name: Przygotuj .env
       run: ./deploy_scripts/generate_env.sh
       env:
