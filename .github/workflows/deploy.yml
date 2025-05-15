@@ -1,0 +1,39 @@
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repo + submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Przygotuj .env
+      run: ./deploy_scripts/generate_env.sh
+      env:
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+    
+    # - name: Stop and clean containers
+    #   run: |
+    #     docker compose down --rmi all --volumes --remove-orphans
+
+    # - name: Install composer dependencies
+    #   run: |
+    #     docker run --rm -v $PWD/prod_My_Resume:/app composer install --working-dir=/app --no-interaction --optimize-autoloader --no-dev
+    #     docker run --rm -v $PWD/StoryTime:/app composer install --working-dir=/app --no-interaction --optimize-autoloader --no-dev
+
+    # - name: Install npm dependencies and build
+    #   run: |
+    #     docker run --rm -v $PWD/prod_My_Resume:/app -w /app node:22-alpine sh -c "npm install && npm run build"
+    #     docker run --rm -v $PWD/StoryTime:/app -w /app node:22-alpine sh -c "npm install && npm run build"
+
+    # - name: Run database migrations
+    #   run: |
+    #     docker compose run --rm artisan_resume migrate --force
+    #     docker compose run --rm artisan_storytime migrate --force
+
+    # - name: Build and start containers
+    #   run: |
+    #     docker compose up -d --build
