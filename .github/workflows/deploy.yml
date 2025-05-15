@@ -8,15 +8,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout repo + submodules
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    
-    - name: Move repo to /var/www
+    - name: Clone fresh repo
       run: |
         rm -rf /var/www/*
-        mv $GITHUB_WORKSPACE/* /var/www
+        git clone git@github.com:OskarKobzaDev/deploy-repo.git
     
     # - name: Stop and clean containers
     #   run: |
