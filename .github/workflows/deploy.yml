@@ -46,11 +46,11 @@ jobs:
     - name: Set permissions for nginx
       run: |
         cd /home/oskar/var/www/deploy-repo/StoryTime
-        chown -R www-data:www-data storage public
+        sudo chown -R www-data:www-data storage public
         chmod -R 775 storage
         chmod -R 755 public
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
-        chown -R www-data:www-data storage public
+        sudo chown -R www-data:www-data storage public
         chmod -R 775 storage
         chmod -R 755 public
 
