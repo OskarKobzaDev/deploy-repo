@@ -8,6 +8,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - name: Stop and clean containers
+      run: |
+        docker-compose down --volumes --remove-orphans
+
     - name: Clone fresh repo with submodules
       run: |
         rm -rf /home/oskar/var/www/deploy-repo
@@ -34,9 +38,6 @@ jobs:
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
 
-    - name: Stop and clean containers
-      run: |
-        docker-compose down all --volumes --remove-orphans
     - name: Stop and clean containers
       run: |
         cd /home/oskar/var/www/deploy-repo
