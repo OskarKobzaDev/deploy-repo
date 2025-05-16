@@ -8,11 +8,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Stop and clean containers
-      run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose down --volumes --remove-orphans
-
     - name: Clone fresh repo with submodules
       run: |
         rm -rf /home/oskar/var/www/deploy-repo
@@ -38,11 +33,26 @@ jobs:
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
-
     - name: Stop and clean containers
       run: |
         cd /home/oskar/var/www/deploy-repo
+        docker-compose down --volumes --remove-orphans
+
+    - name: Start fresh clean containers
+      run: |
+        cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
+
+    - name: Set permissions for nginx
+      run: |
+        cd /home/oskar/var/www/deploy-repo/StoryTime
+        chown -R www-data:www-data storage public
+        chmod -R 775 storage
+        chmod -R 755 public
+        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
+        chown -R www-data:www-data storage public
+        chmod -R 775 storage
+        chmod -R 755 public
 
     # - name: Install composer dependencies
     #   run: |
