@@ -13,6 +13,23 @@ jobs:
         rm -rf /home/oskar/var/www/*
         git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /home/oskar/var/www
 
+    - name: Copy .env files
+      run: |
+        cp /home/oskar/var/www/deploy-repo/prod_My_Resume/.env.prod.example /home/oskar/var/www/deploy-repo/prod_My_Resume/.env
+        cp /home/oskar/var/www/deploy-repo/StoryTime/.env.prod.example /home/oskar/var/www/deploy-repo/StoryTime/.env
+
+    - name: Uzupełnij środowisko dla modułów
+      run: |
+        export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+        export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
+        export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+
+        cd /home/oskar/var/www/modules/mod1
+        ./setup-env.sh
+
+        cd /home/oskar/var/www/modules/mod2
+        ./setup-env.sh
+
 
     # - name: Stop and clean containers
     #   run: |
