@@ -25,10 +25,10 @@ jobs:
         export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
 
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
-        ./setup-env.sh
+        bash /home/oskar/var/www/.github/workflows/deploy_scripts/generate_env.sh
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
-        ./setup-env.sh
+        bash /home/oskar/var/www/.github/workflows/deploy_scripts/generate_env.sh
 
 
     # - name: Stop and clean containers
