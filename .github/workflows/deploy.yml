@@ -16,6 +16,7 @@ jobs:
       run: |
         whoami
         id
+
     - name: Clone fresh repo with submodules
       run: |
         rm -rf /home/oskar/var/www/deploy-repo
@@ -41,10 +42,21 @@ jobs:
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
+
+    - name: Create .env file for docker compose
+      run: |
+        echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
+        echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+        echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+        echo "MEILI_MASTER_KEY=${{ secrets.MEILI_MASTER_KEY }}" >> .env
+        echo "UID=$(id -u)" >> .env
+        echo "GID=$(id -g)" >> .env
+
     - name: Stop and clean containers
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose down --volumes --remove-orphans
+
     - name: Prepare certbot directories
       run: |
         cd /home/oskar/var/www/deploy-repo
@@ -74,7 +86,3 @@ jobs:
     #   run: |
     #     docker compose run --rm artisan_resume migrate --force
     #     docker compose run --rm artisan_storytime migrate --force
-
-    # - name: Build and start containers
-    #   run: |
-    #     docker compose up -d --build

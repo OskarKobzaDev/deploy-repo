@@ -124,10 +124,10 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: Koczkodan1972!*
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: my_resume
       MYSQL_USER: apps
-      MYSQL_PASSWORD: Koczkodan1972!*
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       SERVICE_TAGS: prod
       SERVICE_NAME: mysql
     volumes:
@@ -147,7 +147,7 @@ services:
       - app-network
     ports:
       - "6379:6379"
-    command: ["redis-server", "--requirepass", "Koczkodan1972!*"]
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
 
   # Serwer Nginx
   nginx:

@@ -2,3 +2,4 @@ certbot/conf/*
 certbot/conf/archive/
 certbot/conf/live/
 certbot/conf/accounts/
+.env
