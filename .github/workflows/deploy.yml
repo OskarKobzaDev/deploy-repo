@@ -42,11 +42,11 @@ jobs:
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
-
-    - name: Install composer dependencies
+    
+    - name: Install composer deps
       run: |
-        docker run --rm -v composer_resume --optimize-autoloader --no-dev
-        docker run --rm -v composer_storytime --optimize-autoloader --no-dev
+        docker-compose run --rm composer_resume install --no-dev --optimize-autoloader
+        docker-compose run --rm composer_storytime install --no-dev --optimize-autoloader
 
     # - name: Install npm dependencies and build
     #   run: |
