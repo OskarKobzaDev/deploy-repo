@@ -8,6 +8,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - name: Check user
+      run: |
+        whoami
+        id
     - name: Clone fresh repo with submodules
       run: |
         rm -rf /home/oskar/var/www/deploy-repo
