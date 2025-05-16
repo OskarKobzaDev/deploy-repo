@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Clone fresh repo with submodules
       run: |
-        rm -rf /home/oskar/var/www/deploy-repo
+        sudo rm -rf /home/oskar/var/www/deploy-repo
         git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /home/oskar/var/www/deploy-repo
 
     - name: Copy .env files
