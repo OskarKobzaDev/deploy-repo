@@ -10,6 +10,7 @@ jobs:
     steps:
     - name: Stop and clean containers
       run: |
+        cd /home/oskar/var/www/deploy-repo
         docker-compose down --volumes --remove-orphans
 
     - name: Clone fresh repo with submodules
