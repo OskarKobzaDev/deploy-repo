@@ -36,7 +36,7 @@ jobs:
 
     - name: Stop and clean containers
       run: |
-        docker compose down --rmi all --volumes --remove-orphans
+        docker-compose down all --volumes --remove-orphans
 
     # - name: Install composer dependencies
     #   run: |
