@@ -10,6 +10,7 @@ services:
     build:
       context: ./prod_My_Resume
       dockerfile: Dockerfile
+    user: "${UID}:${GID}"
     container_name: app_resume
     volumes:
       - ./prod_My_Resume/:/var/www/prod_My_Resume
@@ -21,6 +22,7 @@ services:
       - app-network
   npm_resume:
     image: node:22-alpine
+    user: "${UID}:${GID}"
     container_name: npm_resume
     volumes:
       - ./prod_My_Resume/:/var/www/prod_My_Resume
@@ -34,6 +36,7 @@ services:
     build:
       context: ./prod_My_Resume
       dockerfile: Dockerfile
+    user: "${UID}:${GID}"
     container_name: artisan_resume
     volumes:
       - ./prod_My_Resume/:/var/www/prod_My_Resume
@@ -45,6 +48,7 @@ services:
       - app-network
   composer_resume:
     image: composer:latest
+    user: "${UID}:${GID}"
     container_name: composer_resume
     volumes:
       - ./prod_My_Resume/:/var/www/prod_My_Resume
@@ -56,6 +60,7 @@ services:
     build:
       context: ./StoryTime
       dockerfile: Dockerfile
+    user: "${UID}:${GID}"
     container_name: app_storytime
     volumes:
       - ./StoryTime/:/var/www/StoryTime
@@ -67,6 +72,7 @@ services:
       - app-network
   npm_storytime:
     image: node:22-alpine
+    user: "${UID}:${GID}"
     container_name: npm_storytime
     volumes:
       - ./StoryTime/:/var/www/StoryTime
@@ -80,6 +86,7 @@ services:
     build:
       context: ./StoryTime
       dockerfile: Dockerfile
+    user: "${UID}:${GID}"
     container_name: artisan_storytime
     volumes:
       - ./StoryTime/:/var/www/StoryTime
@@ -91,6 +98,7 @@ services:
       - app-network
   composer_storytime:
     image: composer:latest
+    user: "${UID}:${GID}"
     container_name: composer_storytime
     volumes:
       - ./StoryTime/:/var/www/StoryTime
@@ -99,6 +107,7 @@ services:
       - app-network
   meilisearch_storytime:
     image: getmeili/meilisearch:latest
+    user: "${UID}:${GID}"
     container_name: meilisearch_storytime
     ports:
       - "7700:7700"
@@ -111,6 +120,7 @@ services:
   # Baza Danych MySQL
   db:
     image: mysql:8.0
+    user: "${UID}:${GID}"
     container_name: mysql
     restart: unless-stopped
     environment:
@@ -131,6 +141,7 @@ services:
   #Server Redis
   redis:
     image: redis:alpine
+    user: "${UID}:${GID}"
     container_name: redis
     networks:
       - app-network
@@ -141,6 +152,7 @@ services:
   # Serwer Nginx
   nginx:
     image: nginx:latest
+    user: "${UID}:${GID}"
     container_name: my-nginx
     restart: unless-stopped
     ports:
@@ -163,6 +175,7 @@ services:
   # Certbot
   certbot:
     image: certbot/certbot
+    user: "${UID}:${GID}"
     container_name: certbot-renew
     volumes:
       - ./certbot/conf:/etc/letsencrypt
