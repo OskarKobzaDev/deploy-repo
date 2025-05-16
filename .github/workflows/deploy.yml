@@ -37,7 +37,10 @@ jobs:
     - name: Stop and clean containers
       run: |
         docker-compose down all --volumes --remove-orphans
-
+    - name: Stop and clean containers
+      run: |
+        docker-compose up -d --build
+        
     # - name: Install composer dependencies
     #   run: |
     #     docker run --rm -v $PWD/prod_My_Resume:/app composer install --working-dir=/app --no-interaction --optimize-autoloader --no-dev
