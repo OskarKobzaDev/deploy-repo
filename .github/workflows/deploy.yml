@@ -25,13 +25,11 @@ jobs:
         export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
 
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
-        bash /home/oskar/var/www/.github/workflows/deploy_scripts/generate_env.sh
         sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|" .env
         sed -i "s|REDIS_PASSWORD=.*|REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}|" .env
         sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}|" .env
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
-        bash /home/oskar/var/www/.github/workflows/deploy_scripts/generate_env.sh
         sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|" .env
         sed -i "s|REDIS_PASSWORD=.*|REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}|" .env
         sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}|" .env
