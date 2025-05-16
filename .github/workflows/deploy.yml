@@ -24,10 +24,10 @@ jobs:
         export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
         export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
 
-        cd /home/oskar/var/www/modules/mod1
+        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
         ./setup-env.sh
 
-        cd /home/oskar/var/www/modules/mod2
+        cd /home/oskar/var/www/deploy-repo/StoryTime
         ./setup-env.sh
 
 
