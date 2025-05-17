@@ -97,11 +97,11 @@ jobs:
     - name: Run migrations and seed db's
       run: |
         cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm artisan_resume migrate
-        docker-compose run --rm artisan_resume db:seed
-        docker-compose run --rm artisan_storytime migrate
-        docker-compose run --rm artisan_resume db:seed
-    
+        docker-compose run --rm artisan_resume migrate --force
+        docker-compose run --rm artisan_resume db:seed --force
+        docker-compose run --rm artisan_storytime migrate --force
+        docker-compose run --rm artisan_resume db:seed --force
+
     # - name: Run database migrations
     #   run: |
     #     docker compose run --rm artisan_resume migrate --force
