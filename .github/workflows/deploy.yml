@@ -46,12 +46,11 @@ jobs:
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
-        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
+        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=\"${MAIL_PASSWORD}\"#" .env
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
-        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
         sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
 
 
