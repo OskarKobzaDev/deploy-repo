@@ -39,9 +39,9 @@ jobs:
     - name: Create .env file for docker compose and set init file for mysql
       run: |
         cd /home/oskar/var/www/deploy-repo
-        export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+        export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
         echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
-        echo "MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
         echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
         echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
         echo "MEILISEARCH_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
@@ -51,7 +51,7 @@ jobs:
 
     - name: Uzupełnij środowisko dla modułów
       run: |
-        export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+        export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
         export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
         MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
         ESCAPED_MAIL_PASSWORD=$(printf '%s\n' "$MAIL_PASSWORD" | sed 's/[\&/]/\\&/g')
@@ -59,12 +59,12 @@ jobs:
 
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
         echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
-        sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
+        sed -i "s#MYSQL_PASSWORD=.*#MYSQL_PASSWORD=${MYSQL_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=\"$ESCAPED_MAIL_PASSWORD\"|" .env
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
-        sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
+        sed -i "s#MYSQL_PASSWORD=.*#MYSQL_PASSWORD=${MYSQL_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
 
@@ -96,14 +96,18 @@ jobs:
         cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm artisan_resume key:generate --force
         docker-compose run --rm artisan_storytime key:generate --force
-    - name: Run migrations and seed db's
+
+    - name: Run migrations and seed storytime
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose run --rm artisan_storytime migrate --force
+        docker-compose run --rm artisan_storytime db:seed --force
+
+    - name: Run migrations and seed resume
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm artisan_resume migrate --force
         docker-compose run --rm artisan_resume db:seed --force
-        docker-compose run --rm artisan_storytime migrate --force
-        docker-compose run --rm artisan_resume db:seed --force
-
     # - name: Run database migrations
     #   run: |
     #     docker compose run --rm artisan_resume migrate --force
