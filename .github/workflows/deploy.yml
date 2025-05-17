@@ -33,7 +33,7 @@ jobs:
         echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
         echo "MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
         echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-        echo "MEILI_MASTER_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
+        echo "MEILISEARCH_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
         echo "UID=$(id -u oskar)" >> .env
         echo "GID=$(getent group www-data | cut -d: -f3)" >> .env
 
