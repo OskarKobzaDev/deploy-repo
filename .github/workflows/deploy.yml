@@ -88,8 +88,8 @@ jobs:
     - name: Install composer deps
       run: |
         cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm composer_resume install --no-dev --optimize-autoloader
-        docker-compose run --rm composer_storytime install --no-dev --optimize-autoloader
+        docker-compose run --rm composer_resume install --optimize-autoloader
+        docker-compose run --rm composer_storytime install --optimize-autoloader
 
     - name: Generate applications keys
       run: |
