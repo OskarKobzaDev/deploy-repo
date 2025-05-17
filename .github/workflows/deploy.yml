@@ -82,16 +82,20 @@ jobs:
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
-    - name:
+
+    - name: Change ownership and perms via Docker
       run: |
-        cd /home/oskar/var/www/deploy-repo/StoryTime
-        chown -R www-data:www-data storage public
-        chmod -R 775 /var/www/html/storage
-        chmod -R 755 /var/www/html/public
-        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
-        chown -R www-data:www-data storage public
-        chmod -R 775 /var/www/html/storage
-        chmod -R 755 /var/www/html/public
+        docker compose run --rm \
+          -v /home/oskar/var/www/deploy-repo:/app \
+          --workdir /app/StoryTime \
+          app_storytime \
+          sh -c "chown -R www-data:www-data storage public && chmod -R 775 storage && chmod -R 755 public"
+
+        docker compose run --rm \
+          -v /home/oskar/var/www/deploy-repo:/app \
+          --workdir /app/prod_My_Resume \
+          app_resume \
+          sh -c "chown -R www-data:www-data storage public && chmod -R 775 storage && chmod -R 755 public"
 
     - name: Install composer deps
       run: |
