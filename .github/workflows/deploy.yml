@@ -27,6 +27,16 @@ jobs:
         cp /home/oskar/var/www/deploy-repo/prod_My_Resume/.env.prod.example /home/oskar/var/www/deploy-repo/prod_My_Resume/.env
         cp /home/oskar/var/www/deploy-repo/StoryTime/.env.prod.example /home/oskar/var/www/deploy-repo/StoryTime/.env
 
+    - name: Create .env file for docker compose
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
+        echo "MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+        echo "MEILI_MASTER_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
+        echo "UID=$(id -u oskar)" >> .env
+        echo "GID=$(getent group www-data | cut -d: -f3)" >> .env
+
     # - name: Uzupełnij środowisko dla modułów
     #   run: |
     #     export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
@@ -44,15 +54,7 @@ jobs:
     #     sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
     #     sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
 
-    # - name: Create .env file for docker compose
-    #   run: |
-    #     cd /home/oskar/var/www/deploy-repo
-    #     echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
-    #     echo "MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-    #     echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-    #     echo "MEILI_MASTER_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
-    #     echo "UID=$(id -u)" >> .env
-    #     echo "GID=$(id -g)" >> .env
+
 
     # - name: Stop and clean containers
     #   run: |
