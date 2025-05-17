@@ -33,6 +33,7 @@ jobs:
         echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
         echo "MYSQL_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
         echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+        echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
         echo "MEILISEARCH_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
         echo "UID=$(id -u oskar)" >> .env
         echo "GID=$(getent group www-data | cut -d: -f3)" >> .env
@@ -41,14 +42,16 @@ jobs:
       run: |
         export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
         export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
-        export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+        export MAIL_PASSWORD=$(printf '%q' "${{ secrets.MAIL_PASSWORD }}")
+        export MEILISEARCH_KEY="${{ secrets.MEILISEARCH_KEY }}"
 
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
-        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=\"${MAIL_PASSWORD}\"#" .env
+        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${MAIL_PASSWORD}#" .env
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
+        echo "MEILISEARCH_KEY=${{ secrets.MEILISEARCH_KEY }}"
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
