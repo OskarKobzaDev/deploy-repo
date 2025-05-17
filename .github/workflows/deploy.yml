@@ -42,14 +42,15 @@ jobs:
       run: |
         export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
         export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
-        export MAIL_PASSWORD=$(printf '%q' "${{ secrets.MAIL_PASSWORD }}")
+        MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+        ESCAPED_MAIL_PASSWORD=$(printf '%s\n' "$MAIL_PASSWORD" | sed 's/[\&/]/\\&/g')
         export MEILISEARCH_KEY="${{ secrets.MEILISEARCH_KEY }}"
 
         cd /home/oskar/var/www/deploy-repo/prod_My_Resume
         echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
-        sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=\"${{ secrets.MAIL_PASSWORD }}\"|" .env
+        sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=\"$ESCAPED_MAIL_PASSWORD\"|" .env
 
         cd /home/oskar/var/www/deploy-repo/StoryTime
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${DB_PASSWORD}#" .env
