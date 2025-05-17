@@ -78,16 +78,16 @@ jobs:
         # chmod -R 755 ./certbot
         # chown -R $(id -u):$(id -g) ./certbot
 
-    # - name: Start fresh clean containers
-    #   run: |
-    #     cd /home/oskar/var/www/deploy-repo
-    #     docker-compose up -d --build
+    - name: Start fresh clean containers
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose up -d --build
     
-    # - name: Install composer deps
-    #   run: |
-    #     cd /home/oskar/var/www/deploy-repo
-    #     docker-compose run --rm composer_resume install --no-dev --optimize-autoloader
-    #     docker-compose run --rm composer_storytime install --no-dev --optimize-autoloader
+    - name: Install composer deps
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose run --rm composer_resume install --no-dev --optimize-autoloader
+        docker-compose run --rm composer_storytime install --no-dev --optimize-autoloader
 
 
     #test
