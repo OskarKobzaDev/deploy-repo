@@ -92,8 +92,8 @@ jobs:
     - name: Generate applications keys
       run: |
         cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm artisan_resume key:generate
-        docker-compose run --rm artisan_storytime key:generate
+        docker-compose run --rm artisan_resume key:generate --force
+        docker-compose run --rm artisan_storytime key:generate --force
     - name: Run migrations and seed db's
       run: |
         cd /home/oskar/var/www/deploy-repo
