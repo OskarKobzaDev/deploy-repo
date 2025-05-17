@@ -82,7 +82,17 @@ jobs:
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
-    
+    - name:
+      run: |
+        cd /home/oskar/var/www/deploy-repo/StoryTime
+        chown -R www-data:www-data storage public
+        chmod -R 775 /var/www/html/storage
+        chmod -R 755 /var/www/html/public
+        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
+        chown -R www-data:www-data storage public
+        chmod -R 775 /var/www/html/storage
+        chmod -R 755 /var/www/html/public
+
     - name: Install composer deps
       run: |
         cd /home/oskar/var/www/deploy-repo
