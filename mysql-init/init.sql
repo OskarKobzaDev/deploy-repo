@@ -2,10 +2,10 @@ cat <<EOF > init.sql
 CREATE DATABASE IF NOT EXISTS resume;
 CREATE DATABASE IF NOT EXISTS storytime;
 
-CREATE USER 'user_resume'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+CREATE USER 'user_resume'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON resume.* TO 'user_resume'@'%';
 
-CREATE USER 'user_storytime'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+CREATE USER 'user_storytime'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON storytime.* TO 'user_storytime'@'%';
 
 FLUSH PRIVILEGES;
