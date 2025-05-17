@@ -83,32 +83,17 @@ jobs:
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
 
-    - name: Change ownership and perms via Docker
-      run: |
-        docker run --rm \
-          -v /home/oskar/var/www/deploy-repo:/app \
-          --workdir /app/StoryTime \
-          app_storytime \
-          sh -c "chown -R www-data:www-data storage public && chmod -R 775 storage && chmod -R 755 public"
-
-        docker run --rm \
-          -v /home/oskar/var/www/deploy-repo:/app \
-          --workdir /app/prod_My_Resume \
-          app_resume \
-          sh -c "chown -R www-data:www-data storage public && chmod -R 775 storage && chmod -R 755 public"
-
     - name: Install composer deps
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm composer_resume install --no-dev --optimize-autoloader
         docker-compose run --rm composer_storytime install --no-dev --optimize-autoloader
 
-
-    #test
-    # - name: Install npm dependencies and build
-    #   run: |
-    #     docker run --rm -v $PWD/prod_My_Resume:/app -w /app node:22-alpine sh -c "npm install && npm run build"
-    #     docker run --rm -v $PWD/StoryTime:/app -w /app node:22-alpine sh -c "npm install && npm run build"
+    - name: Install npm dependencies and build
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose run --rm artisan_resume key:generate
+        docker-compose run --rm artisan_storytime key:generate
 
     # - name: Run database migrations
     #   run: |
