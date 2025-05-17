@@ -21,7 +21,6 @@ jobs:
       run: |
         rm -rf /home/oskar/var/www/deploy-repo
         git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /home/oskar/var/www/deploy-repo
-
     # - name: Copy .env files
     #   run: |
     #     cp /home/oskar/var/www/deploy-repo/prod_My_Resume/.env.prod.example /home/oskar/var/www/deploy-repo/prod_My_Resume/.env
