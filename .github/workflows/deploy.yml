@@ -109,6 +109,14 @@ jobs:
         docker-compose run --rm artisan_resume migrate --force
         docker-compose run --rm artisan_resume db:seed --force
 
-    - name: Install node deps resume
+    - name: Install node deps and build assets resume
       run: |
-        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose run --rm npm_resume install
+        docker-compose run --rm npm_resume run build
+
+    - name: Install node deps and build assets storytime
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker-compose run --rm npm_storytime install
+        docker-compose run --rm npm_storytime run build
