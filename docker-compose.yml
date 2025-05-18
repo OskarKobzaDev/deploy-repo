@@ -152,7 +152,6 @@ services:
   # Serwer Nginx
   nginx:
     image: nginx:latest
-    user: "${UID}:${GID}"
     container_name: my-nginx
     restart: unless-stopped
     ports:
