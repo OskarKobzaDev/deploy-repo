@@ -175,7 +175,6 @@ services:
   # Certbot
   certbot_init:
     image: certbot/certbot
-    user: "${UID}:${GID}"
     container_name: certbot-init
     volumes:
       - ./certbot/conf:/etc/letsencrypt
