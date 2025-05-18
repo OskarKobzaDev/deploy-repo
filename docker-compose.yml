@@ -173,20 +173,20 @@ services:
       - app-network
 
   # Certbot
-    certbot_init:
-      image: certbot/certbot
-      user: "${UID}:${GID}"
-      container_name: certbot-init
-      volumes:
-        - ./certbot/conf:/etc/letsencrypt
-        - ./certbot/www:/var/www/certbot
-      entrypoint: >
-        sh -c "certbot certonly --webroot -w /var/www/certbot
-        --email oskarkobza@gmail.com --agree-tos --no-eff-email
-        -d oskarkobza.pl -d www.oskarkobza.pl
-        -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl"
-      networks:
-        - app-network
+  certbot_init:
+    image: certbot/certbot
+    user: "${UID}:${GID}"
+    container_name: certbot-init
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot -w /var/www/certbot
+      --email oskarkobza@gmail.com --agree-tos --no-eff-email
+      -d oskarkobza.pl -d www.oskarkobza.pl
+      -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl"
+    networks:
+      - app-network
 
 volumes:
   dbdata:
