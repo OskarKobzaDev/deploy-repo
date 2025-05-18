@@ -107,7 +107,6 @@ services:
       - app-network
   meilisearch_storytime:
     image: getmeili/meilisearch:latest
-    user: "${UID}:${GID}"
     container_name: meilisearch_storytime
     ports:
       - "7700:7700"
