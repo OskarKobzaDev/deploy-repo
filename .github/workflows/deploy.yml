@@ -73,13 +73,15 @@ jobs:
         cd /home/oskar/var/www/deploy-repo
         docker-compose down --volumes --remove-orphans
 
-    - name: Prepare certbot directories via Docker
+    - name: Prepare certbot and nginx directories via Docker
       run: |
         docker run --rm \
           -v /home/oskar/var/www/deploy-repo:/data \
           alpine \
-          sh -c "mkdir -p /data/certbot/conf /data/certbot/www /data/certbot/logs /data/certbot/work && \
-                 chmod -R 775 /data/certbot && \
+          sh -c "mkdir -p /data/certbot/conf /data/certbot/www /data/certbot/logs /data/certbot/work /data/nginx/logs && \
+                 chmod -R 755 /data/certbot && \
+                 chmod -R 755 /data/nginx && \
+                 chown -R ${UID}:${GID} /data/nginx" || true
                  chown -R ${UID}:${GID} /data/certbot" || true
 
     - name: Start fresh clean containers
