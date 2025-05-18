@@ -181,6 +181,12 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./certbot/logs:/var/log/letsencrypt
       - ./certbot/work:/var/www/certbot/work
+    command: >
+      sh -c "
+        if [ ! -f /etc/letsencrypt/options-ssl-nginx.conf ]; then
+          cp /usr/share/letsencrypt/options-ssl-nginx.conf /etc/letsencrypt/
+        fi
+      "
     networks:
       - app-network
 
