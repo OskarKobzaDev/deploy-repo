@@ -111,6 +111,10 @@ jobs:
       run: |
         cp /home/oskar/var/www/deploy-repo/nginx/default-ssl.conf /home/oskar/var/www/deploy-repo/nginx/default.conf
 
+    - name: Generate openSSL file
+      run: |
+        openssl dhparam -out /home/oskar/var/www/deploy-repo/certbot/conf/ssl-dhparams.pem 2048
+
     - name: Reload nginx
       run: |
         cd /home/oskar/var/www/deploy-repo
