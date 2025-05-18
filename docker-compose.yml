@@ -187,6 +187,9 @@ services:
       -d oskarkobza.pl -d www.oskarkobza.pl
       -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl
       --email oskarkobza@gmail.com --agree-tos --no-eff-email --quiet
+      --config-dir /etc/letsencrypt
+      --work-dir /var/www/certbot/work
+      --logs-dir /var/log/letsencrypt
     networks:
       - app-network
 
