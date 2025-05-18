@@ -116,7 +116,7 @@ services:
     volumes:
       - meili_data:/data.ms
     environment:
-      MEILI_MASTER_KEY: AI5vZ2J4QPB2xvPIiMCwQsjK8VjcnG8e
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
   # Baza Danych MySQL
   db:
     image: mysql:8.0
