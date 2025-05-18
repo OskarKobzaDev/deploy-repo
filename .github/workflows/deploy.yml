@@ -77,7 +77,7 @@ jobs:
       run: |
         cd /home/oskar/var/www/deploy-repo
         mkdir -p ./certbot/conf ./certbot/www ./certbot/logs ./certbot/work
-        chmod -R 755 ./certbot
+        chmod -R 775 ./certbot
         chown -R $(id -u):$(id -g) ./certbot
 
     - name: Start fresh clean containers
