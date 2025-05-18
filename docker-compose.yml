@@ -141,7 +141,6 @@ services:
   #Server Redis
   redis:
     image: redis:alpine
-    user: "${UID}:${GID}"
     container_name: redis
     networks:
       - app-network
@@ -186,3 +185,4 @@ volumes:
   dbdata:
     driver: local
   meili_data:
+  redis:
