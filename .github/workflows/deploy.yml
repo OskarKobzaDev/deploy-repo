@@ -85,10 +85,10 @@ jobs:
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
 
-    - name: Run init certbot
-      run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm certbot_init
+    # - name: Run init certbot
+    #   run: |
+    #     cd /home/oskar/var/www/deploy-repo
+    #     docker-compose run --rm certbot_init
 
     - name: Install composer deps
       run: |
