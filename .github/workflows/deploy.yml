@@ -107,6 +107,14 @@ jobs:
           --no-eff-email \
           --force-renewal
 
+    - name: Change nginx configuration to ssl
+      run: |
+        cp /home/oskar/var/www/deploy-repo/nginx/default-ssl.conf /home/oskar/var/www/deploy-repo/nginx/default.conf
+
+    - name: Reload nginx
+      run: |
+        cd /home/oskar/var/www/deploy-repo
+        docker restart my-nginx
 
     - name: Install composer deps
       run: |
