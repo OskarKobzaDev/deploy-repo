@@ -96,6 +96,7 @@ jobs:
 
     - name: Run certbot for oskarkobza.pl i storytimedemo
       run: |
+        cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm certbot_init certonly \
           --webroot \
           -w /var/www/certbot \
