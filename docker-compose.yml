@@ -116,7 +116,7 @@ services:
     volumes:
       - meili_data:/data.ms
     environment:
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY}
   # Baza Danych MySQL
   db:
     image: mysql:8.0
@@ -173,17 +173,20 @@ services:
       - app-network
 
   # Certbot
-  certbot:
-    image: certbot/certbot
-    user: "${UID}:${GID}"
-    container_name: certbot-renew
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: >
-      sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --deploy-hook 'nginx -s reload'; sleep 12h; done"
-    networks:
-      - app-network
+    certbot_init:
+      image: certbot/certbot
+      user: "${UID}:${GID}"
+      container_name: certbot-init
+      volumes:
+        - ./certbot/conf:/etc/letsencrypt
+        - ./certbot/www:/var/www/certbot
+      entrypoint: >
+        sh -c "certbot certonly --webroot -w /var/www/certbot
+        --email oskarkobza@gmail.com --agree-tos --no-eff-email
+        -d oskarkobza.pl -d www.oskarkobza.pl
+        -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl"
+      networks:
+        - app-network
 
 volumes:
   dbdata:
