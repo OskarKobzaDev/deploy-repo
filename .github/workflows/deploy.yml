@@ -84,6 +84,11 @@ jobs:
                  chown -R ${UID}:${GID} /data/nginx && \
                  chown -R ${UID}:${GID} /data/certbot" || true
 
+    - name: Pobierz options-ssl-nginx.conf
+      run: |
+        curl -sSL https://raw.githubusercontent.com/certbot/certbot/main/certbot-nginx/src/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf \
+          -o /home/oskar/var/www/deploy-repo/certbot/conf/options-ssl-nginx.conf
+
     - name: Start fresh clean containers
       run: |
         cd /home/oskar/var/www/deploy-repo
