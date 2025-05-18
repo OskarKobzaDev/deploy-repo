@@ -77,15 +77,15 @@ jobs:
       run: |
         cd /home/oskar/var/www/deploy-repo
         mkdir -p ./certbot/conf ./certbot/www ./certbot/logs ./certbot/work
-        # chmod -R 755 ./certbot
-        # chown -R $(id -u):$(id -g) ./certbot
+        chmod -R 755 ./certbot
+        chown -R $(id -u):$(id -g) ./certbot
 
     - name: Start fresh clean containers
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose up -d --build
 
-    - name: Start fresh clean containers
+    - name: Run init certbot
       run: |
         cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm certbot_init
