@@ -183,13 +183,16 @@ services:
       - ./certbot/logs:/var/log/letsencrypt
       - ./certbot/work:/var/www/certbot/work
     command: >
-      certonly --webroot -w /var/www/certbot
-      -d oskarkobza.pl -d www.oskarkobza.pl
-      -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl
-      --email oskarkobza@gmail.com --agree-tos --no-eff-email --quiet
-      --config-dir /etc/letsencrypt
-      --work-dir /var/www/certbot/work
-      --logs-dir /var/log/letsencrypt
+      sh -c "
+        chown -R 1000:33 /etc/letsencrypt /var/www/certbot /var/log/letsencrypt /var/www/certbot/work &&
+        certbot certonly --webroot -w /var/www/certbot
+        -d oskarkobza.pl -d www.oskarkobza.pl
+        -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl
+        --email oskarkobza@gmail.com --agree-tos --no-eff-email --quiet
+        --config-dir /etc/letsencrypt
+        --work-dir /var/www/certbot/work
+        --logs-dir /var/log/letsencrypt
+      "
     networks:
       - app-network
 
