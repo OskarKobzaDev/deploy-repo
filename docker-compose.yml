@@ -148,6 +148,18 @@ services:
     ports:
       - "6379:6379"
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+  # Certbot
+  certbot_init:
+    image: certbot/certbot
+    user: "${UID}:${GID}"
+    container_name: certbot-init
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/logs:/var/log/letsencrypt
+      - ./certbot/work:/var/www/certbot/work
+    networks:
+      - app-network
 
   # Serwer Nginx
   nginx:
@@ -168,18 +180,6 @@ services:
       - app_resume
       - app_storytime
       - db
-    networks:
-      - app-network
-
-  # Certbot
-  certbot_init:
-    image: certbot/certbot
-    container_name: certbot-init
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/logs:/var/log/letsencrypt
-      - ./certbot/work:/var/www/certbot/work
     networks:
       - app-network
 
