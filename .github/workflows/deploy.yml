@@ -76,7 +76,7 @@ jobs:
     - name: Prepare certbot directories
       run: |
         cd /home/oskar/var/www/deploy-repo
-        mkdir -p ./certbot/conf ./certbot/www
+        mkdir -p ./certbot/conf ./certbot/www ./certbot/logs
         # chmod -R 755 ./certbot
         # chown -R $(id -u):$(id -g) ./certbot
 
