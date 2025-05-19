@@ -109,3 +109,8 @@ jobs:
         cd /home/oskar/var/www/deploy-repo
         docker-compose run --rm npm_storytime install
         docker-compose run --rm npm_storytime run build
+
+    - name: Run import and queue worker for meilsearch
+      run: |
+        docker-compose run --rm artisan_resume scout:import "App\Models\Post"
+        docker-compose run -d artisan_storytime queue:work
