@@ -68,57 +68,11 @@ jobs:
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
 
-    - name: Stop and clean containers
+    - name: Rebuild and restart apps containers
       run: |
         cd /home/oskar/var/www/deploy-repo
-        docker-compose down --volumes --remove-orphans
-
-    - name: Prepare certbot and nginx directories via Docker
-      run: |
-        docker run --rm \
-          -v /home/oskar/var/www/deploy-repo:/data \
-          alpine \
-          sh -c "mkdir -p /data/certbot/conf /data/certbot/www /data/certbot/logs /data/certbot/work /data/nginx/logs && \
-                 chmod -R 755 /data/certbot && \
-                 chmod -R 755 /data/nginx && \
-                 chown -R ${UID}:${GID} /data/nginx && \
-                 chown -R ${UID}:${GID} /data/certbot" || true
-
-    - name: Download options-ssl-nginx.conf
-      run: |
-        curl -sSL https://raw.githubusercontent.com/certbot/certbot/main/certbot-nginx/src/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf \
-          -o /home/oskar/var/www/deploy-repo/certbot/conf/options-ssl-nginx.conf
-
-    - name: Start fresh clean containers
-      run: |
-        cd /home/oskar/var/www/deploy-repo
+        docker-compose down -v
         docker-compose up -d --build
-
-    - name: Run certbot for oskarkobza.pl i storytimedemo
-      run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm certbot_init certonly \
-          --webroot \
-          -w /var/www/certbot \
-          --email oskar@oskarkobza.pl \
-          -d oskarkobza.pl -d www.oskarkobza.pl \
-          -d storytimedemo.oskarkobza.pl -d www.storytimedemo.oskarkobza.pl \
-          --agree-tos \
-          --no-eff-email \
-          --force-renewal
-
-    - name: Change nginx configuration to ssl
-      run: |
-        cp /home/oskar/var/www/deploy-repo/nginx/default-ssl.conf /home/oskar/var/www/deploy-repo/nginx/default.conf
-
-    - name: Generate openSSL file
-      run: |
-        openssl dhparam -out /home/oskar/var/www/deploy-repo/certbot/conf/ssl-dhparams.pem 2048
-
-    - name: Reload nginx
-      run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker restart my-nginx
 
     - name: Install composer deps
       run: |
