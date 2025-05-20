@@ -116,3 +116,5 @@ jobs:
         docker-compose run --rm artisan_storytime scout:index posts
         docker-compose run --rm artisan_storytime scout:import "App\Models\Post"
         docker-compose run -d artisan_storytime queue:work
+
+    #test
