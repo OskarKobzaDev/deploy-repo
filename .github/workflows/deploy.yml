@@ -1,6 +1,9 @@
+name: Deploy Applications
+
 env:
   UID: 1000
   GID: 33
+  DEPLOY_PATH: /home/oskar/var/www/deploy-repo
 
 on:
   push:
@@ -8,113 +11,175 @@ on:
       - main
 
 jobs:
-  deploy:
+  prepare-environment:
     runs-on: self-hosted
-
+    outputs:
+      uid: ${{ steps.get-ids.outputs.uid }}
+      gid: ${{ steps.get-ids.outputs.gid }}
     steps:
     - name: Check user
       run: |
         whoami
         id
 
+    - name: Get user and group IDs
+      id: get-ids
+      run: |
+        echo "uid=$(id -u oskar)" >> $GITHUB_OUTPUT
+        echo "gid=$(getent group www-data | cut -d: -f3)" >> $GITHUB_OUTPUT
+
     - name: Reset ownership via Docker
       run: |
         docker run --rm \
-          -v /home/oskar/var/www/deploy-repo:/data \
+          -v ${{ env.DEPLOY_PATH }}:/data \
           alpine \
-          chown -R "${UID}:${GID}" /data || true
+          chown -R "${{ env.UID }}:${{ env.GID }}" /data || true
 
     - name: Remove old repo
-      run: rm -rf /home/oskar/var/www/deploy-repo
+      run: rm -rf ${{ env.DEPLOY_PATH }}
 
     - name: Clone fresh repo with submodules
       run: |
-        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git /home/oskar/var/www/deploy-repo
+        git clone --recurse-submodules git@github.com:OskarKobzaDev/deploy-repo.git ${{ env.DEPLOY_PATH }}
 
+  setup-configuration:
+    runs-on: self-hosted
+    needs: prepare-environment
+    steps:
     - name: Copy .env files
       run: |
-        cp /home/oskar/var/www/deploy-repo/prod_My_Resume/.env.prod.example /home/oskar/var/www/deploy-repo/prod_My_Resume/.env
-        cp /home/oskar/var/www/deploy-repo/StoryTime/.env.prod.example /home/oskar/var/www/deploy-repo/StoryTime/.env
+        cp ${{ env.DEPLOY_PATH }}/prod_My_Resume/.env.prod.example ${{ env.DEPLOY_PATH }}/prod_My_Resume/.env
+        cp ${{ env.DEPLOY_PATH }}/StoryTime/.env.prod.example ${{ env.DEPLOY_PATH }}/StoryTime/.env
 
-    - name: Create .env file for docker compose and set init file for mysql
+    - name: Create .env file for docker compose
       run: |
-        cd /home/oskar/var/www/deploy-repo
-        export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+        cd ${{ env.DEPLOY_PATH }}
         echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
         echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
         echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
         echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
         echo "MEILISEARCH_KEY=${{ secrets.MEILISEARCH_KEY }}" >> .env
-        echo "UID=$(id -u oskar)" >> .env
-        echo "GID=$(getent group www-data | cut -d: -f3)" >> .env
+        echo "UID=${{ needs.prepare-environment.outputs.uid }}" >> .env
+        echo "GID=${{ needs.prepare-environment.outputs.gid }}" >> .env
+
+    - name: Setup MySQL init file
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
         envsubst < mysql-init/init.sql.template > mysql-init/init.sql
 
-    - name: Uzupełnij środowisko dla modułów
+    - name: Configure My Resume environment
       run: |
         export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
         export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
         MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
         ESCAPED_MAIL_PASSWORD=$(printf '%s\n' "$MAIL_PASSWORD" | sed 's/[\&/]/\\&/g')
-        export MEILISEARCH_KEY="${{ secrets.MEILISEARCH_KEY }}"
-
-        cd /home/oskar/var/www/deploy-repo/prod_My_Resume
-        echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
+        
+        cd ${{ env.DEPLOY_PATH }}/prod_My_Resume
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${MYSQL_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=\"$ESCAPED_MAIL_PASSWORD\"|" .env
 
-        cd /home/oskar/var/www/deploy-repo/StoryTime
+    - name: Configure StoryTime environment
+      run: |
+        export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+        export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
+        export MEILISEARCH_KEY="${{ secrets.MEILISEARCH_KEY }}"
+        
+        cd ${{ env.DEPLOY_PATH }}/StoryTime
         sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${MYSQL_PASSWORD}#" .env
         sed -i "s#REDIS_PASSWORD=.*#REDIS_PASSWORD=${REDIS_PASSWORD}#" .env
         sed -i "s#MEILISEARCH_KEY=.*#MEILISEARCH_KEY=${MEILISEARCH_KEY}#" .env
 
-    - name: Rebuild and restart apps containers
+  docker-infrastructure:
+    runs-on: self-hosted
+    needs: setup-configuration
+    steps:
+    - name: Rebuild and restart containers
       run: |
-        cd /home/oskar/var/www/deploy-repo
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose down -v
         docker-compose up -d --build
 
-    - name: Install composer deps
+  install-dependencies:
+    runs-on: self-hosted
+    needs: docker-infrastructure
+    steps:
+    - name: Install Composer dependencies for My Resume
       run: |
-        cd /home/oskar/var/www/deploy-repo
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm composer_resume install --optimize-autoloader
+
+    - name: Install Composer dependencies for StoryTime
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm composer_storytime install --optimize-autoloader
 
-    - name: Generate applications keys
+    - name: Install Node dependencies for My Resume
       run: |
-        cd /home/oskar/var/www/deploy-repo
+        cd ${{ env.DEPLOY_PATH }}
+        docker-compose run --rm npm_resume install
+
+    - name: Install Node dependencies for StoryTime
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        docker-compose run --rm npm_storytime install
+
+  setup-laravel:
+    runs-on: self-hosted
+    needs: install-dependencies
+    steps:
+    - name: Generate application keys
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm artisan_resume key:generate --force
         docker-compose run --rm artisan_storytime key:generate --force
 
-    - name: Run migrations and seed storytime
+    - name: Run My Resume migrations and seeders
       run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm artisan_storytime migrate --force
-        docker-compose run --rm artisan_storytime db:seed --force
-
-    - name: Run migrations and seed resume
-      run: |
-        cd /home/oskar/var/www/deploy-repo
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm artisan_resume migrate --force
         docker-compose run --rm artisan_resume db:seed --force
 
-    - name: Install node deps and build assets resume
+    - name: Run StoryTime migrations and seeders
       run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm npm_resume install
+        cd ${{ env.DEPLOY_PATH }}
+        docker-compose run --rm artisan_storytime migrate --force
+        docker-compose run --rm artisan_storytime db:seed --force
+
+  build-assets:
+    runs-on: self-hosted
+    needs: setup-laravel
+    steps:
+    - name: Build My Resume assets
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm npm_resume run build
 
-    - name: Install node deps and build assets storytime
+    - name: Build StoryTime assets
       run: |
-        cd /home/oskar/var/www/deploy-repo
-        docker-compose run --rm npm_storytime install
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm npm_storytime run build
 
-    - name: Run import and queue worker for meilsearch
+  finalize-deployment:
+    runs-on: self-hosted
+    needs: build-assets
+    steps:
+    - name: Setup Meilisearch
       run: |
-        cd /home/oskar/var/www/deploy-repo
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run --rm artisan_storytime scout:index posts
         docker-compose run --rm artisan_storytime scout:import "App\Models\Post"
+
+    - name: Start queue worker
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
         docker-compose run -d artisan_storytime queue:work
 
-    #test
+    - name: Restart nginx
+      run: |
+        cd ${{ env.DEPLOY_PATH }}
+        docker restart my-nginx
+
+    - name: Deployment complete
+      run: echo "✅ Deployment completed successfully!"
